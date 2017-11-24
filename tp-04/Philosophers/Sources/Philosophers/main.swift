@@ -44,9 +44,43 @@ do {
 print()
 
 do {
-    let philosophers = lockFreePhilosophers(n: 3)
+    let philosophers = lockFreePhilosophers(n: 5)
     // let philosophers = lockablePhilosophers(n: 3)
-    for m in philosophers.simulation(from: philosophers.initialMarking!).prefix(10) {
+    /* for m in philosophers.simulation(from: philosophers.initialMarking!).prefix(10) {
         print(m)
+    }
+    */
+
+    // Partie 1
+    let partie1 = philosophers.markingGraph(from: philosophers.initialMarking!)
+    print("Réponse pour partie 1")
+    print(partie1!.count)
+
+    // Partie 2
+    let blocked_philosophers = lockablePhilosophers(n: 5)
+    let partie2 = blocked_philosophers.markingGraph(from: blocked_philosophers.initialMarking!)
+    print("Réponse pour partie 2")
+    print(partie2!.count)
+
+    // Partie 3
+    print("Réponse pour partie 3")
+    for i in partie2!
+    {
+      var pas_vide = true
+      for (_, successeursByBinding) in i.successors
+      {
+        if (!(successeursByBinding.isEmpty))
+        {
+          pas_vide = false
+        }
+
+      }
+      if (pas_vide)
+      {
+        print(i.marking)
+        // Si un exemple est trouvé, sortir du boucle
+        break
+      }
+
     }
 }

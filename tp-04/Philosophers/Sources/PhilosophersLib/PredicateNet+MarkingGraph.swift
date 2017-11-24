@@ -2,18 +2,55 @@ extension PredicateNet {
 
     /// Returns the marking graph of a bounded predicate net.
     public func markingGraph(from marking: MarkingType) -> PredicateMarkingNode<T>? {
-        // Write your code here ...
+        // marquage initial
+        let marquage_initial = PredicateMarkingNode<T>(marking: marking)
 
-        // Note that I created the two static methods `equals(_:_:)` and `greater(_:_:)` to help
-        // you compare predicate markings. You can use them as the following:
-        //
-        //     PredicateNet.equals(someMarking, someOtherMarking)
-        //     PredicateNet.greater(someMarking, someOtherMarking)
-        //
-        // You may use these methods to check if you've already visited a marking, or if the model
-        // is unbounded.
+        // marquage avant (déjà visité)
+        var marquage_avant = [marquage_initial]
 
-        return nil
+        // marquage après (pas encore visité)
+        var marquage_apres = [marquage_initial]
+
+        while (!(marquage_apres.isEmpty))
+        {
+          // initialise le marquage courant
+          let marquage_courant = marquage_apres[0]
+
+          for transition in self.transitions
+          {
+            // initialise la liste des successeurs comme une liste vide
+            marquage_courant.successors[transition] = [:]
+            let bindings_courantes = transition.fireableBingings(from: marquage_courant.marking)
+            for binding in bindings_courantes
+            {
+              let transition_courante = transition.fire(from: marquage_courant.marking, with: binding)
+              if (transition_courante != nil)
+              {
+                if (marquage_avant.contains(where: { PredicateNet.greater (transition_courante!, $0.marking) } ) )
+                {
+                  return nil
+                }
+                if (!(marquage_avant.contains(where: { PredicateNet.equals (transition_courante!, $0.marking) })))
+                {
+                  let marquage_prochain = PredicateMarkingNode<T>(marking: transition_courante!, successors: [:])
+                  marquage_courant.successors[transition]![binding] = marquage_prochain
+                  marquage_apres.append(marquage_prochain)
+                  marquage_avant.append(marquage_prochain)
+                }
+                else
+                {
+                  let indice = marquage_avant.index(where : { PredicateNet.equals (transition_courante!, $0.marking) })
+                  marquage_courant.successors[transition]![binding] = marquage_avant[indice!]
+                }
+              }
+            }
+          }
+          // supprime le premier élément dans ce qui est pas visité
+          marquage_apres.remove(at : 0)
+
+        }
+
+        return marquage_initial
     }
 
     // MARK: Internals
