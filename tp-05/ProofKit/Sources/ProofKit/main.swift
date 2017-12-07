@@ -2,51 +2,52 @@ import ProofKitLib
 
 let a: Formula = "a"
 let b: Formula = "b"
-let f = a && b
+let c: Formula = "c"
+let d: Formula = "d"
 
-print(f)
 
-let booleanEvaluation = f.eval { (proposition) -> Bool in
-    switch proposition {
-        case "p": return true
-        case "q": return false
-        default : return false
-    }
-}
-print(booleanEvaluation)
+//
 
-enum Fruit: BooleanAlgebra {
+// etape 1
+let f = a => b
 
-    case apple, orange
+// etape 2
+let g = !(!a)
+let h = !(a && b)
+let i = !(a || b)
 
-    static prefix func !(operand: Fruit) -> Fruit {
-        switch operand {
-        case .apple : return .orange
-        case .orange: return .apple
-        }
-    }
+// etape 3
+let q = a || (b && c)
+let qq = (b && c) || a
 
-    static func ||(lhs: Fruit, rhs: @autoclosure () throws -> Fruit) rethrows -> Fruit {
-        switch (lhs, try rhs()) {
-        case (.orange, .orange): return .orange
-        case (_ , _)           : return .apple
-        }
-    }
+let qqq = !(a || b) && (!c || !d)
+let qqqq = a && b && c && d
+let qqqqq = (a && b) || (c && d)
 
-    static func &&(lhs: Fruit, rhs: @autoclosure () throws -> Fruit) rethrows -> Fruit {
-        switch (lhs, try rhs()) {
-        case (.apple , .apple): return .apple
-        case (_, _)           : return .orange
-        }
-    }
+let dnf1 = a && (b || c)
+let dnf2 = (b || c) && a
 
-}
 
-let fruityEvaluation = f.eval { (proposition) -> Fruit in
-    switch proposition {
-        case "p": return .apple
-        case "q": return .orange
-        default : return .orange
-    }
-}
-print(fruityEvaluation)
+print(f, " ==> CNF ==> ", f.cnf)
+print(g, " ==> CNF ==> ", g.cnf)
+print(h, " ==> CNF ==> ", h.cnf)
+print(i, " ==> CNF ==> ", i.cnf)
+print(q, " ==> CNF ==> ", q.cnf)
+print(qq, " ==> CNF ==> ", qq.cnf)
+print(qqq, " ==> CNF ==> ", qqq.cnf)
+print(qqqq, " ==> CNF ==> ", qqqq.cnf)
+print(qqqqq, " ==> CNF ==> ", qqqqq.cnf)
+
+print("------------------------------")
+
+print(f, " ==> DNF ==> ", f.dnf)
+print(g, " ==> DNF ==> ", g.dnf)
+print(h, " ==> DNF ==> ", h.dnf)
+print(i, " ==> DNF ==> ", i.dnf)
+print(q, " ==> DNF ==> ", q.dnf)
+print(qq, " ==> DNF ==> ", qq.dnf)
+print(qqq, " ==> DNF ==> ", qqq.dnf)
+print(qqqq, " ==> DNF ==> ", qqqq.dnf)
+print(qqqqq, " ==> DNF ==> ", qqqqq.dnf)
+print(dnf1, " ==> DNF ==> ", dnf1.dnf)
+print(dnf2, " ==> DNF ==> ", dnf2.dnf)
